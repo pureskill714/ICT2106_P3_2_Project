@@ -1,5 +1,6 @@
 
 import React from "react"
+import { Button } from "reactstrap"
 import { Loading } from "../../Components/appCommon"
 import DatapageLayout from "../PageLayout"
 
@@ -123,20 +124,19 @@ export default class ServiceCenters extends React.Component {
         if(this.state.loading){
             return <Loading></Loading>
         }else{
-            
-        return(
+            return (
             <DatapageLayout 
-                settings={this.settings}
-                fieldSettings={this.state.settings.data.FieldSettings} 
-                headers={this.state.settings.data.ColumnSettings} 
-                data={this.state.content.data}
-                updateHandle = {this.handleUpdate}
-                requestRefresh = {this.requestRefresh}
-                error={this.state.error}
-                permissions={this.props.permissions}
-                requestError={this.requestError}
-                >
-            </DatapageLayout>
+                    settings={this.settings}
+                    fieldSettings={this.state.settings.data.FieldSettings}
+                    headers={this.state.settings.data.ColumnSettings}
+                    data={this.state.content.data}
+                    updateHandle={this.handleUpdate}
+                    requestRefresh={this.requestRefresh}
+                    error={this.state.error}
+                    permissions={this.props.permissions}
+                    requestError={this.requestError}
+                    >
+                </DatapageLayout>
             )
         }
     }

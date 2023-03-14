@@ -23,11 +23,12 @@ import DonorDashboard from './Pages/Donor/DonorDashboard';
 import Donate from './Pages/Donor/Donate';
 import DonorHistory from './Pages/Donor/DonorHistory';
 import DonorAvailableProjects from './Pages/Donor/DonorAvailableProjects';
-import ServiceCenters from './Pages/Employee/ServiceCenters';
+import ServiceCenters from './Pages/ServiceCenter/ServiceCenters';
 import VolunteerWork from './Pages/Volunteer/VolunteerWork';
 import Project from './Pages/Project/Project';
 import Expense from './Pages/Expense/Expense';
 import Permissions from './Pages/Admin/Permissions';
+import UserGeneric from './Pages/ServiceCenter/Users/UserGeneric'
 
 import Home  from "./Pages/Home"
 import VolunteerHome from "./Pages/Volunteer/volunteerHome"
@@ -102,7 +103,7 @@ export default function App() {
                 <DrawerItem label="Home" to={"/"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
                 <DrawerItem label="Service Center" to={"/Service-Center"} logo={userImg}></DrawerItem>
                 <DrawerItem label="Projects" to={"/Project"} logo={userImg}></DrawerItem>
-                <DrawerItem label="Users" to={"/Employees"} logo={userImg}></DrawerItem>
+                <DrawerItem label="Users" to={"/UserGeneric"} logo={userImg}></DrawerItem>
                 <DrawerItem label="Logout" to={"/Logout"} logo={logoutImg}></DrawerItem>
               </DrawerSection>
             </SlideDrawer>
@@ -146,10 +147,11 @@ export default function App() {
               ""
               }
               <Route path="/Users" element={<Users user={token} permissions = {parsedPerms}/>}/>  
-              <Route path="/Employees" element={<Employees user={token} permissions = {parsedPerms}/>}/>
+                <Route path="/Employees" element={<Employees user={token} permissions={parsedPerms} />} />
               <Route path="/Volunteers" element={<Volunteer user={token} permissions = {parsedPerms}/>}/>
               <Route path="/Donors" element={<Donors user={token} permissions = {parsedPerms}></Donors>}/>
-              <Route path="/Service-Center" element={<ServiceCenters user={token} permissions = {parsedPerms}/>}/>
+                          <Route path="/Service-Center" element={<ServiceCenters user={token} permissions={parsedPerms} />} />
+                          <Route path="/UserGeneric" element={<UserGeneric user={token} permissions={parsedPerms} />} />
                 <Route path="/Project" element={<Project user={token} permissions={parsedPerms} />} />
                 <Route path="/volunteer-Registration" element={<VolunteerRegistration user={token} permissions={parsedPerms} />} />
                 <Route path="/Donations" element={<Donations user={token} permissions={parsedPerms}></Donations>} />

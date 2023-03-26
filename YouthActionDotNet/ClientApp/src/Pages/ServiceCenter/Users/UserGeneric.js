@@ -5,6 +5,7 @@ import DatapageLayout from "../../PageLayout"
 import { Pie } from 'react-chartjs-2'
 import { Table, Thead, Tbody, Tfoot, Tr, Th, Td, TableCaption, TableContainer } from '@chakra-ui/react'
 import "../../../styles/userDashboard.css";
+import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 
 
 //const data= {
@@ -269,136 +270,136 @@ export default class UserGeneric extends React.Component {
                 <div className="pie-chart">
                     <Pie data={data} options={option} />
                 </div>
-                <div className="userTable">
-                    <TableContainer>
-                        <Table>
-                            <Thead>
-                                <Tr>
-                                    <Th>
-                                        User Id
-                                    </Th>
-                                    <Th>
-                                        Employee Name
-                                    </Th>
-                                    <Th>
-                                        Employee Email
-                                    </Th>
-                                    <Th>
-                                        Employee Type
-                                    </Th>
-                                    <Th>
-                                        Address
-                                    </Th>
-                                    <Th>
-                                        Role
-                                    </Th>
-                                </Tr>
-                            </Thead>
-                            <Tbody>
-                                {console.log(myEmployeeList)}
-                                {myEmployeeList.map(item =>
-                                    <Tr key={item.UserId}>
-                                        <Td>{item.UserId}</Td>
-                                        <Td>{item.username}</Td>
-                                        <Td>{item.Email}</Td>
-                                        <Td>{item.EmployeeType}</Td>
-                                        <Td>{item.address}</Td>
-                                        <Td>{item.Role}</Td>
-                                    </Tr>
-                                )}
-                            </Tbody>
-                        </Table>
-                    </TableContainer>
-                </div>
-                <div className="userTable">
-                    <TableContainer>
-                        <Table>
-                            <Thead>
-                                <Tr>
-                                    <Th>
-                                        User Id
-                                    </Th>
-                                    <Th>
-                                        Donor Name
-                                    </Th>
-                                    <Th>
-                                        Donor Type
-                                    </Th>
-                                    <Th>
-                                        Donor Email
-                                    </Th>
-                                    <Th>
-                                        Donor Phone Number
-                                    </Th>
-                                </Tr>
-                            </Thead>
-                            <Tbody>
-                                {console.log(myDonorList)}
-                                {myDonorList.map(item =>
-                                    <Tr key={item.UserId}>
-                                        <Td>{item.UserId}</Td>
-                                        <Td>{item.donorName}</Td>
-                                        <Td>{item.donorType}</Td>
-                                        <Td>{item.Email}</Td>
-                                        <Td>{item.phoneNumber}</Td>
-                                    </Tr>
-                                )}
-                            </Tbody>
-                        </Table>
-                    </TableContainer>
-                </div>
-                <div className="userTable">
-                    <TableContainer>
-                        <Table>
-                            <Thead>
-                                <Tr>
-                                    <Th>
-                                        User Id
-                                    </Th>
-                                    <Th>
-                                        Volunteer Username
-                                    </Th>
-                                    <Th>
-                                        Qualifications
-                                    </Th>
-                                    <Th>
-                                        Volunteer Email
-                                    </Th>
-                                    <Th>
-                                        Volunteer Phone Number
-                                    </Th>
-                                </Tr>
-                            </Thead>
-                            <Tbody>
-                                {console.log(myVolunteerList)}
-                                {myVolunteerList.map(item =>
-                                    <Tr key={item.UserId}>
-                                        <Td>{item.UserId}</Td>
-                                        <Td>{item.username}</Td>
-                                        <Td>{item.Qualifications}</Td>
-                                        <Td>{item.Email}</Td>
-                                        <Td>{item.phoneNumber}</Td>
-                                    </Tr>
-                                )}
-                            </Tbody>
-                        </Table>
-                    </TableContainer>
-                </div>
-                {/**
-                    <DatapageLayout 
-                        settings={this.settings}
-                        fieldSettings={this.state.settings.data.FieldSettings} 
-                        headers={this.state.settings.data.ColumnSettings} 
-                        data={this.state.content.data}
-                        updateHandle = {this.handleUpdate}
-                        requestRefresh = {this.requestRefresh}
-                        error={this.state.error}
-                        permissions={this.props.permissions}
-                        requestError={this.requestError}
-                        >
-                  </DatapageLayout>
-                  */}
-
+                <Tabs variant='enclosed'>
+                    <TabList>
+                        <Tab>Employee</Tab>
+                        <Tab>Donor</Tab>
+                        <Tab>Volunteer</Tab>
+                    </TabList>
+                    <TabPanels>
+                        <TabPanel>
+                            <div className="userTable">
+                                <TableContainer>
+                                    <Table>
+                                        <Thead>
+                                            <Tr>
+                                                <Th>
+                                                    User Id
+                                                </Th>
+                                                <Th>
+                                                    Employee Name
+                                                </Th>
+                                                <Th>
+                                                    Employee Email
+                                                </Th>
+                                                <Th>
+                                                    Employee Type
+                                                </Th>
+                                                <Th>
+                                                    Address
+                                                </Th>
+                                                <Th>
+                                                    Role
+                                                </Th>
+                                            </Tr>
+                                        </Thead>
+                                        <Tbody>
+                                            {console.log(myEmployeeList)}
+                                            {myEmployeeList.map(item =>
+                                                <Tr key={item.UserId}>
+                                                    <Td>{item.UserId}</Td>
+                                                    <Td>{item.username}</Td>
+                                                    <Td>{item.Email}</Td>
+                                                    <Td>{item.EmployeeType}</Td>
+                                                    <Td>{item.address}</Td>
+                                                    <Td>{item.Role}</Td>
+                                                </Tr>
+                                            )}
+                                        </Tbody>
+                                    </Table>
+                                </TableContainer>
+                            </div>
+                        </TabPanel>
+                        <TabPanel>
+                            <div className="userTable">
+                                <TableContainer>
+                                    <Table>
+                                        <Thead>
+                                            <Tr>
+                                                <Th>
+                                                    User Id
+                                                </Th>
+                                                <Th>
+                                                    Donor Name
+                                                </Th>
+                                                <Th>
+                                                    Donor Type
+                                                </Th>
+                                                <Th>
+                                                    Donor Email
+                                                </Th>
+                                                <Th>
+                                                    Donor Phone Number
+                                                </Th>
+                                            </Tr>
+                                        </Thead>
+                                        <Tbody>
+                                            {console.log(myDonorList)}
+                                            {myDonorList.map(item =>
+                                                <Tr key={item.UserId}>
+                                                    <Td>{item.UserId}</Td>
+                                                    <Td>{item.donorName}</Td>
+                                                    <Td>{item.donorType}</Td>
+                                                    <Td>{item.Email}</Td>
+                                                    <Td>{item.phoneNumber}</Td>
+                                                </Tr>
+                                            )}
+                                        </Tbody>
+                                    </Table>
+                                </TableContainer>
+                            </div>
+                        </TabPanel>
+                        <TabPanel>
+                            <div className="userTable">
+                                <TableContainer>
+                                    <Table>
+                                        <Thead>
+                                            <Tr>
+                                                <Th>
+                                                    User Id
+                                                </Th>
+                                                <Th>
+                                                    Volunteer Username
+                                                </Th>
+                                                <Th>
+                                                    Qualifications
+                                                </Th>
+                                                <Th>
+                                                    Volunteer Email
+                                                </Th>
+                                                <Th>
+                                                    Volunteer Phone Number
+                                                </Th>
+                                            </Tr>
+                                        </Thead>
+                                        <Tbody>
+                                            {console.log(myVolunteerList)}
+                                            {myVolunteerList.map(item =>
+                                                <Tr key={item.UserId}>
+                                                    <Td>{item.UserId}</Td>
+                                                    <Td>{item.username}</Td>
+                                                    <Td>{item.Qualifications}</Td>
+                                                    <Td>{item.Email}</Td>
+                                                    <Td>{item.phoneNumber}</Td>
+                                                </Tr>
+                                            )}
+                                        </Tbody>
+                                    </Table>
+                                </TableContainer>
+                            </div>
+                        </TabPanel>
+                    </TabPanels>
+                </Tabs>
             </div >
         )
     }

@@ -12,10 +12,12 @@ namespace YouthActionDotNet.DAL
         Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
         string includeProperties = "");
 
-        IEnumerable<T> GetAllAsync(Expression<Func<T, bool>> filter = null,
+        Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> filter = null,
         Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
         string includeProperties = "");
 
         T GetByID(object id);
+
+        Task<T> GetByIDAsync(object id);
     }
 }

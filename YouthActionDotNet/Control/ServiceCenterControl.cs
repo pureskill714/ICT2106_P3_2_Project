@@ -13,10 +13,11 @@ using YouthActionDotNet.Models;
 
 namespace YouthActionDotNet.Control
 {
-    public class ServiceCenterControl : IUserInterfaceCRUD<ServiceCenter>, IServiceCentreRepoIn<ServiceCenter>, IServiceCentreRepoOut<ServiceCenter>
+    public class ServiceCenterControl : IUserInterfaceCRUD<ServiceCenter>, IServiceCentreRepoIn<ServiceCenter>
     {
         private GenericRepositoryIn<ServiceCenter> ServiceCenterRepositoryIn;
-        private GenericRepositoryOut<ServiceCenter> ServiceCenterRepositoryOut;
+        private IServiceCentreRepoOut<ServiceCenter> ServiceCenterRepositoryOut;
+        //private GenericRepositoryOut<ServiceCenter> ServiceCenterRepositoryOut;
         private GenericRepositoryIn<User> UserRepositoryIn;
         private GenericRepositoryOut<User> UserRepositoryOut;
         JsonSerializerSettings settings = new JsonSerializerSettings

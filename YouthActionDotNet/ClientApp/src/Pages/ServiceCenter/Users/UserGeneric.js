@@ -397,7 +397,7 @@ export default class UserGeneric extends React.Component {
       option,
     } = this.state;
     return (
-      <div style={{ width: "100%" }}>
+      <div style={{ width: "80%" }}>
         <ReactNotifications /> {/* For the popup notification */}
         <div style={{ width: "2em" }}>
           <MyComponent></MyComponent> {/* For the bellicon and all the logic */}

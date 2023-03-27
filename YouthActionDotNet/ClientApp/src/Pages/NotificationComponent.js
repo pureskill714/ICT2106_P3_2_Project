@@ -376,7 +376,7 @@ const MyComponent = () => {
         height: "8em",
         position: "absolute",
         zIndex: 15,
-        backgroundColor: "yellowgreen",
+        backgroundColor: "transparent",
         top: "0em",
         right: "23em",
       }}
@@ -420,7 +420,7 @@ const MyComponent = () => {
       </button> */}
 
       {/* This Unordered list is for debugging hehehe */}
-      <ul style={{ width: "100vw" }}>
+      <ul style={{ width: "100vw", color: "transparent" }}>
         {notifications.map(
           (notification) => (
             countItemsinList(),
@@ -432,7 +432,7 @@ const MyComponent = () => {
                       notification.status === "read" ? "normal" : "bold",
                   }}
                 >
-                  {notification.message} {" -> status ->"} {notification.status}
+                  {/* {notification.message} {" -> status ->"} {notification.status} */}
                 </span>
               </li>
             )

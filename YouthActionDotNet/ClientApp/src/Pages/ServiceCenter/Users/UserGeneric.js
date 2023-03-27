@@ -6,6 +6,7 @@ import { Pie } from 'react-chartjs-2'
 import { Table, Thead, Tbody, Tfoot, Tr, Th, Td, TableCaption, TableContainer } from '@chakra-ui/react'
 import "../../../styles/userDashboard.css";
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
+import * as signalR from '@microsoft/signalr'
 
 
 //const data= {
@@ -39,6 +40,7 @@ import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 //};
 
 export default class UserGeneric extends React.Component {
+    connection = null;
 
     constructor(props) {
         super(props);
@@ -49,6 +51,10 @@ export default class UserGeneric extends React.Component {
             myEmployeeList: [],
             myDonorList: [],
             myVolunteerList: [],
+            donorCount: 0,
+            employeeCount: 0,
+            volunteerCount: 0,
+            counter: 0,
             headers: [],
             loading: true,
             settings: {},
@@ -71,8 +77,10 @@ export default class UserGeneric extends React.Component {
                         position: 'right'
                     }
                 }
-            }
+            },
+
         }
+
         this.settings = {
             title: "Employees",
             primaryColor: "#a6192e",
@@ -81,8 +89,10 @@ export default class UserGeneric extends React.Component {
             textColorInvert: "#606060",
             apiEmployee: "/api/Employee/",
             apiDonor: "/api/Donor/",
-            apiVolunteer: "/api/Volunteer/"
+            apiVolunteer: "/api/Volunteer/",
+            apiUserGeneric: "/api/UserGeneric/"
         }
+
     }
 
     async componentDidMount() {
@@ -156,12 +166,95 @@ export default class UserGeneric extends React.Component {
         this.setState({
             loading: false,
         })
+
+        await this.configureSignalR();
+        await this.triggerDonorCountUpdate();
+        await this.triggerEmployeeCountUpdate();
+        await this.triggerVolunteerCountUpdate();
     }
 
     shouldComponentUpdate(nextProps, nextState) {
         return this.state.myEmployeeList !== nextState.myEmployeeList || this.state.myDonorList !== nextState.myDonorList ||
-            this.state.myVolunteerList !== nextState.myVolunteerList
+            this.state.myVolunteerList !== nextState.myVolunteerList || this.state.donorCount !== nextState.donorCount || this.state.volunteerCount !== nextState.volunteerCount
+            || this.state.employeeCount !== nextState.employeeCount
     }
+    
+
+    componentWillUnmount() {
+        if (this.connection) {
+            this.connection.stop();
+        }
+    }
+
+    configureSignalR = async () => {
+        this.connection = new signalR.HubConnectionBuilder()
+            .withUrl('/userGenericCountHub')
+            .withAutomaticReconnect()
+            .build();
+
+        this.connection.on('UpdatedUserCount', (userCount) => {
+            if (this.state.counter == 0) {
+                console.log('checking donor Count' + userCount);
+                this.setState({
+                    donorCount: userCount,
+                    counter: this.state.counter + 1
+                });
+            } else if (this.state.counter == 1) {
+                console.log('checking employee Count' + userCount);
+                this.setState({
+                    employeeCount: userCount,
+                    counter: this.state.counter + 1
+                });
+            } else if (this.state.counter == 2) {
+                console.log('checking volunteer Count' + userCount);
+                this.setState({
+                    volunteerCount: userCount,
+                    counter: 0
+                });
+            }
+        });
+
+        try {
+            await this.connection.start();
+            console.log('SignalR connection established');
+        } catch (error) {
+            console.error('Error establishing SignalR connection:', error);
+        }
+    };
+
+    triggerDonorCountUpdate = async () => {
+        const newCount = this.state.myDonorList.length
+        try {
+            await fetch(this.settings.apiUserGeneric + `simulatedonorcountupdate/${newCount}`, {
+                method: 'POST',
+            });
+        } catch (error) {
+                console.error('Error triggering user count update:', error);
+        }
+    }
+
+    triggerEmployeeCountUpdate = async () => {
+        const newCount = this.state.myEmployeeList.length
+        try {
+            await fetch(this.settings.apiUserGeneric + `simulateemployeecountupdate/${newCount}`, {
+                method: 'POST',
+            });
+        } catch (error) {
+            console.error('Error triggering user count update:', error);
+        }
+    }
+
+    triggerVolunteerCountUpdate = async () => {
+        const newCount = this.state.myVolunteerList.length
+        try {
+            await fetch(this.settings.apiUserGeneric + `simulatevolunteercountupdate/${newCount}`, {
+                method: 'POST',
+            });
+        } catch (error) {
+            console.error('Error triggering user count update:', error);
+        }
+    }
+
 
     getEmployeeContent = async () => {
         return fetch(this.settings.apiEmployee + "All", {
@@ -264,9 +357,12 @@ export default class UserGeneric extends React.Component {
     }
 
     render() {
-        const { myEmployeeList, myDonorList, myVolunteerList, data, option } = this.state;
+        const { myEmployeeList, myDonorList, myVolunteerList, donorCount, employeeCount, volunteerCount, data, option } = this.state;
         return (
             <div className="Users">
+                <p>donorCount is {donorCount}</p>
+                <p>employeeCount is {employeeCount}</p>
+                <p>volunteerCount is {volunteerCount}</p>
                 <div className="pie-chart">
                     <Pie data={data} options={option} />
                 </div>

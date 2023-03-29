@@ -37,8 +37,6 @@ export default class ServiceCenters extends React.Component {
         settings: {},
         error: "",
         employeeNameList: [],
-        donorNameList: [],
-        volunteerNameList: [],
         fieldSettings: {},
         columnSettings: {},
         dataContent: []
@@ -53,8 +51,6 @@ export default class ServiceCenters extends React.Component {
         textColorInvert: "#606060",
         api: "/api/ServiceCenter/",
         apiEmployee: "/api/Employee/",
-        apiDonor: "/api/Donor/",
-        apiVolunteer: "/api/Volunteer/",
     };
 
     async componentDidMount() {
@@ -76,25 +72,6 @@ export default class ServiceCenters extends React.Component {
         });
 
         await this.getEmployeeContent();
-
-        await this.getDonorContent().then((content) => {
-            console.log(content.data);
-            const donorNames = content.data.map((donor) => donor.username);
-            this.setState({
-                donorNameList: donorNames
-            });
-            console.log(donorNames)
-        });
-
-        await this.getVolunteerContent().then((content) => {
-            console.log(content.data);
-            const volunteerNames = content.data.map((volunteer) => volunteer.username);
-            this.setState({
-                volunteerNameList: volunteerNames
-            });
-            console.log(volunteerNames)
-        });
-
         //await this.filterEmployee();
 
         this.setState({
@@ -108,9 +85,7 @@ export default class ServiceCenters extends React.Component {
             !deepEqual(this.state.fieldSettings, prevState.fieldSettings) ||
             !deepEqual(this.state.columnSettings, prevState.columnSettings) ||
             !deepEqual(this.state.dataContent, prevState.dataContent) ||
-            !deepEqual(this.state.donorNameList, prevState.donorNameList) ||
-            !deepEqual(this.state.employeeNameList, prevState.employeeNameList) ||
-            !deepEqual(this.state.volunteerNameList, prevState.volunteerNameList)
+            !deepEqual(this.state.employeeNameList, prevState.employeeNameList)
         ) {
             await this.filterEmployee();
         }
@@ -120,14 +95,10 @@ export default class ServiceCenters extends React.Component {
         const initialFieldSettings = this.state.fieldSettings;
         //console.log(initialFieldSettings)
         initialFieldSettings["Employee"] = { type: "text", displayLabel: "Employee", editable: "false", primaryKey: "false", tooltip: "null" }
-        initialFieldSettings["Donor"] = { type: "text", displayLabel: "Donors", editable: "false", primaryKey: "false", tooltip: "null" }
-        initialFieldSettings["Volunteer"] = { type: "text", displayLabel: "Volunteer", editable: "false", primaryKey: "false", tooltip: "null" }
         //console.log(initialFieldSettings)
 
         const initialColumnSettings = this.state.columnSettings;
         initialColumnSettings["Employee"] = { displayHeader: 'Employee' }
-        initialColumnSettings["Donor"] = { displayHeader: 'Donor' }
-        initialColumnSettings["Volunteer"] = { displayHeader: 'Volunteer' }
 
         const employeeNameMap = this.state.employeeNameList.reduce((map, employee) => {
             if (!map[employee.serviceCenterName]) {
@@ -138,19 +109,14 @@ export default class ServiceCenters extends React.Component {
         }, {});
 
         const initialSCData = this.state.dataContent;
-        const donorString = this.state.donorNameList.join(", ");
-        const volunteerString = this.state.volunteerNameList.join(", ");
 
         if (initialSCData) {
             const updatedSCData = initialSCData.map(obj => {
                 const employeeNamesForServiceCenter = employeeNameMap[obj.ServiceCenterName]?.join(", ") || "";
-                // Do the same for donorNamesForServiceCenter and volunteerNamesForServiceCenter
 
                 return {
                     ...obj,
-                    Employee: [employeeNamesForServiceCenter],
-                    Donor: [donorString],
-                    Volunteer: [volunteerString]
+                    Employee: [employeeNamesForServiceCenter]
                 };
             });
 
@@ -223,32 +189,6 @@ export default class ServiceCenters extends React.Component {
             this.setState({
                 employeeNameList: employeeNames
             });
-        });
-    };
-
-    getDonorContent = async () => {
-        return fetch(this.settings.apiDonor + "All", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        }).then((res) => {
-            console.log(res);
-            //Res = {success: true, message: "Success", data: Array(3)}
-            return res.json();
-        });
-    };
-
-    getVolunteerContent = async () => {
-        return fetch(this.settings.apiVolunteer + "All", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        }).then((res) => {
-            console.log(res);
-            //Res = {success: true, message: "Success", data: Array(3)}
-            return res.json();
         });
     };
 

@@ -45,32 +45,29 @@ export default class ServiceCenters extends React.Component {
 
         await this.getEmployeeContent().then((content) => {
             console.log(content.data);
-            // TODO: get content.data[i].username, with i being the iterator for each element in the list
-            // TODO: append it into the "employee1, employee2, employee3" format
             const employeeNames = content.data.map((employee) => employee.username);
             this.setState({
                 employeeNameList: employeeNames
             });
+            console.log(employeeNames)
         });
 
         await this.getDonorContent().then((content) => {
             console.log(content.data);
-            // TODO: get content.data[i].username, with i being the iterator for each element in the list
-            // TODO: append it into the "donor1, donor2, donor3" format
             const donorNames = content.data.map((donor) => donor.username);
             this.setState({
                 donorNameList: donorNames
             });
+            console.log(donorNames)
         });
 
         await this.getVolunteerContent().then((content) => {
             console.log(content.data);
-            // TODO: get content.data[i].username, with i being the iterator for each element in the list
-            // TODO: append it into the "volunteer1, volunteer2, volunteer3" format
             const volunteerNames = content.data.map((volunteer) => volunteer.username);
             this.setState({
                 volunteerNameList: volunteerNames
-            }); 
+            });
+            console.log(volunteerNames)
         });
 
         await this.getSettings().then((settings) => {
@@ -91,20 +88,20 @@ export default class ServiceCenters extends React.Component {
     }
 
     async componentDidUpdate(prevProps, prevState) {
-        if (this.state.fieldSettings !== prevState.fieldSettings || this.state.columnSettings !== prevState.columnSettings ||
-            this.state.dataContent !== prevState.fieldSettings) {
-            await this.filterEmployee()
+        if (this.state.fieldSettings !== prevState.fieldSettings ||
+            this.state.columnSettings !== prevState.columnSettings ||
+            this.state.dataContent !== prevState.dataContent) {
+            await this.filterEmployee();
         }
-
     }
 
     filterEmployee = async () => {
         const initialFieldSettings = this.state.fieldSettings;
-        console.log(initialFieldSettings)
+        //console.log(initialFieldSettings)
         initialFieldSettings["Employee"] = { type: "text", displayLabel: "Employee", editable: "false", primaryKey: "false", tooltip: "null" }
         initialFieldSettings["Donor"] = { type: "text", displayLabel: "Donors", editable: "false", primaryKey: "false", tooltip: "null" }
         initialFieldSettings["Volunteer"] = { type: "text", displayLabel: "Volunteer", editable: "false", primaryKey: "false", tooltip: "null" }
-        console.log(initialFieldSettings)
+        //console.log(initialFieldSettings)
 
         const initialColumnSettings = this.state.columnSettings;
         initialColumnSettings["Employee"] = { displayHeader: 'Employee' }
@@ -116,9 +113,9 @@ export default class ServiceCenters extends React.Component {
         if (initialSCData) {
             const updatedSCData = initialSCData.map(obj => ({
                 ...obj,
-                Employee: this.formatNames(obj.Employee, this.state.employeeNameList),
-                Donor: this.formatNames(obj.Donor, this.state.donorNameList),
-                Volunteer: this.formatNames(obj.Volunteer, this.state.volunteerNameList)
+                Employee: this.state.employeeNameList,
+                Donor: this.state.donorNameList,
+                Volunteer: this.state.volunteerNameList
             }))
             console.log(initialColumnSettings, initialFieldSettings, initialSCData)
             this.setState({
@@ -130,6 +127,7 @@ export default class ServiceCenters extends React.Component {
     };
 
     formatNames = (namesString, nameList) => {
+        console.log(nameList)
         if (!namesString) {
             return "";
         }

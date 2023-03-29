@@ -27,92 +27,31 @@ const PieChart = () => {
     );
     };
 
-    const LineChart = () => {
-        const [selectedLabel, setSelectedLabel] = useState('');
-      
-        const originalData = {
-          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-          datasets: [
-            {
-              label: 'Start Date',
-              borderColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8e5ea2', '#3cba9f', '#e8c3b9', '#FF6384', '#36A2EB', '#FFCE56', '#8e5ea2', '#3cba9f', '#e8c3b9'],
-              backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8e5ea2', '#3cba9f', '#e8c3b9', '#FF6384', '#36A2EB', '#FFCE56', '#8e5ea2', '#3cba9f', '#e8c3b9'],
-              data: [0, 10, 5, 2, 20, 30, 0, 10, 5, 2, 20, 30],
-            },
-          ],
-        };
-      
-        const [data, setData] = useState(originalData);
-      
-        const handleLabelClick = (label) => {
-          const index = data.labels.indexOf(label);
-          const originalValue = originalData.datasets[0].data[index];
-          const currentValue = data.datasets[0].data[index];
-      
-          if (currentValue !== 0) {
-            const newData = {
-              ...data,
-              datasets: [
-                {
-                  ...data.datasets[0],
-                  data: [
-                    ...data.datasets[0].data.slice(0, index),
-                    0,
-                    ...data.datasets[0].data.slice(index + 1),
-                  ],
-                },
-              ],
-            };
-      
-            setData(newData);
-          } else if (originalValue !== 0) {
-            const newData = {
-              ...data,
-              datasets: [
-                {
-                  ...data.datasets[0],
-                  data: [
-                    ...data.datasets[0].data.slice(0, index),
-                    originalValue,
-                    ...data.datasets[0].data.slice(index + 1),
-                  ],
-                },
-              ],
-            };
-      
-            setData(newData);
-          }
-        };
-      
-        return (
-          <div className="col">
-            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-              {data.labels.map((label) => (
-                <button
-                  key={label}
-                  onClick={() => handleLabelClick(label)}
-                  style={{ backgroundColor: data.datasets[0].data[data.labels.indexOf(label)] === 0 ? 'lightgrey' : 'white' }}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-            <Line data={data} style={{ height: '250px' }} />
-          </div>
-        );
-      };
-      
 
 export default class Project extends React.Component {
-    state = {
+
+  constructor(props) {
+    super(props);
+    this.count = [0, 0, 0];
+    this.state = {
         content: null,
         headers: [],
         loading: true,
         settings: {},
         error: "",
+        data: {
+          labels: ['In-progress', 'Completed', 'Not Started'],
+          datasets: [
+              {
+                  data: this.count,
+                  backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+                  hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+              }
+          ]
+      },
     }
 
-    settings = {
+    this.settings = {
         title: "Project",
         primaryColor: "#a6192e",
         accentColor: "#94795d",
@@ -121,14 +60,104 @@ export default class Project extends React.Component {
         api: "/api/Project/",
         
     }
+  }
+  async reset() {
+    await this.getContent().then((content) => {
+        const filteredContent = content.data;
+
+        const completeCount = filteredContent.filter(item => item.ProjectStatus === "Complete").length;
+        const inProgressCount = filteredContent.filter(item => item.ProjectStatus === "In progress").length;
+        const notStartedCount = filteredContent.filter(item => item.ProjectStatus === "Not Started").length;
+        this.count[0] = completeCount
+        this.count[1] = inProgressCount
+        this.count[2] = notStartedCount
+        console.log(content);
+        this.setState({
+            content: filteredContent,
+            data: {
+                labels: ['In-progress', 'Completed', 'Not Started'],
+                datasets: [
+                    {
+                        data: this.count,
+                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+                        hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+                    }
+                ]
+            },
+        });
+    })
+
+    await this.getSettings().then((settings) => {
+        console.log(settings);
+        this.setState({
+            settings: settings,
+        });
+    })
+
+    this.setState({
+        loading: false,
+    })
+}
+
+  async filterName(name) {
+    await this.getContent().then((content) => {
+        const filteredContent = content.data.filter(item => item.ServiceCenterId === name);
+ 
+        const completeCount = filteredContent.filter(item => item.ProjectStatus === "Complete").length;
+        const inProgressCount = filteredContent.filter(item => item.ProjectStatus === "In progress").length;
+        const notStartedCount = filteredContent.filter(item => item.ProjectStatus === "Not Started").length;
+        this.count[0] = completeCount
+        this.count[1] = inProgressCount
+        this.count[2] = notStartedCount
+        console.log(content);
+
+        this.setState({
+            content: filteredContent,
+            data: {
+                labels: ['In-progress', 'Completed', 'Not Started'],
+                datasets: [
+                    {
+                        data: this.count,
+                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+                        hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+                    }
+                ]
+            },
+        });
+
+    })
+
+    await this.getSettings().then((settings) => {
+        console.log(settings);
+        this.setState({
+            settings: settings,
+        });
+    })
+
+    this.setState({
+        loading: false,
+    })
+}
+
+
+
+
 
     async componentDidMount() {
-        await this.getContent().then((content) => {
-            console.log(content);
-            this.setState({
-                content: content,
-            });
-        })
+
+      await this.getContent().then((content) => {
+        const completeCount = content.data.filter(item => item.ProjectStatus   === "Complete").length;
+        const inProgressCount = content.data.filter(item => item.ProjectStatus   === "In progress").length;
+        const notStartedCount = content.data.filter(item => item.ProjectStatus   === "Not Started").length;
+        this.count[0] = completeCount
+        this.count[1] = inProgressCount
+        this.count[2] = notStartedCount
+        console.log(content);
+        this.setState({
+            content: content,
+        });
+    })
+
 
         await this.getSettings().then((settings) => {
             console.log(settings);
@@ -141,6 +170,7 @@ export default class Project extends React.Component {
             loading: false,
         })
     }
+
 
     getSettings = async () => {
         // fetches http://...:5001/api/User/Settings
@@ -218,6 +248,8 @@ export default class Project extends React.Component {
 
 
     render() {
+      const { data, option } = this.state;
+
         if (this.state.loading) {
             return <Loading></Loading>
         } else {
@@ -229,13 +261,14 @@ export default class Project extends React.Component {
                     <Card>
                         <CardBody style={{ display: "flex", flexDirection: "row" }} className="pie-chart">
                             <div >
-                                <PieChart/>
+                            <div className="pie-chart">
+                                <Pie data={data} options={option} />
+                                </div>
+                                <div><button onClick={() => this.reset()}>All</button></div>
+                                <div><button onClick={() => this.filterName("id2")}>Hougang Service Center</button></div>
+                                <div><button onClick={() => this.filterName("fed1f105-7ae4-40e5-b055-9185b7d8ab9e")}>Test Employee Center</button></div>
                             </div>
-                            <div>
-                                <LineChart/>
-                            </div>
-
-                           
+                            
                         </CardBody>
                         <DatapageLayout
                             settings={this.settings}

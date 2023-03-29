@@ -12,7 +12,11 @@ export default class ServiceCenters extends React.Component {
     loading: true,
     settings: {},
     error: "",
-  };
+    fieldSettings: {},
+    columnSettings: {},
+    dataContent: []
+    };
+
 
   settings = {
     title: "Service Center",
@@ -27,21 +31,68 @@ export default class ServiceCenters extends React.Component {
     await this.getContent().then((content) => {
       console.log(content);
       this.setState({
-        content: content,
+          content: content,
+          dataContent: content.data
       });
     });
 
-    await this.getSettings().then((settings) => {
-      console.log(settings);
+      await this.getSettings().then((settings) => {
+          console.log(settings)
       this.setState({
-        settings: settings,
+          settings: settings,
+          fieldSettings: settings.data.FieldSettings,
+          columnSettings: settings.data.ColumnSettings
       });
     });
+
+      //await this.filterEmployee();
 
     this.setState({
       loading: false,
     });
-  }
+
+    }
+
+    async componentDidUpdate(prevProps, prevState) {
+        if (this.state.fieldSettings !== prevState.fieldSettings || this.state.columnSettings !== prevState.columnSettings ||
+            this.state.dataContent !== prevState.fieldSettings) {
+            await this.filterEmployee()
+        }
+
+    }
+
+    filterEmployee = async () => {
+        const initialFieldSettings = this.state.fieldSettings;
+        console.log(initialFieldSettings)
+        initialFieldSettings["Employee"] = { type: "text", displayLabel: "Employee", editable: "false", primaryKey: "false", tooltip: "null" }
+        console.log(initialFieldSettings)
+
+        const initialColumnSettings = this.state.columnSettings;
+        initialColumnSettings["Employee"] = { displayHeader: 'Employee' }
+
+        const initialSCData = this.state.dataContent;
+
+        if (initialSCData) {
+            const updatedSCData = initialSCData.map(obj => ({
+                ...obj,
+                Employee: 'yan,joe' || 'yan, Joe'
+            }))
+            console.log(initialColumnSettings, initialFieldSettings, initialSCData)
+            this.setState({
+                fieldSettings: initialFieldSettings,
+                columnSettings: initialColumnSettings,
+                dataContent: updatedSCData
+            });
+        }
+    };
+
+        shouldComponentUpdate(nextProps, nextState) {
+            return (
+                this.state.columnSettings !== nextState.columnSettings ||
+                this.state.fieldSettings !== nextState.fieldSettings ||
+                this.state.dataContent !== nextState.dataContent
+            );
+        }
 
   test = (abc, def) => {};
 
@@ -116,9 +167,11 @@ export default class ServiceCenters extends React.Component {
     this.setState({
       error: error,
     });
-  };
+    };
 
-  render() {
+
+    render() {
+        const { fieldSettings, columnSettings, dataContent }= this.state
     if (this.state.loading) {
       return <Loading></Loading>;
     } else {
@@ -130,10 +183,10 @@ export default class ServiceCenters extends React.Component {
           </div>
 
           <DatapageLayout
-            settings={this.settings}
-            fieldSettings={this.state.settings.data.FieldSettings}
-            headers={this.state.settings.data.ColumnSettings}
-            data={this.state.content.data}
+                  settings={this.settings}
+                  fieldSettings={fieldSettings}
+                  headers={columnSettings}
+                  data={dataContent}
             updateHandle={this.handleUpdate}
             requestRefresh={this.requestRefresh}
             error={this.state.error}

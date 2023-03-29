@@ -33,6 +33,12 @@ import UserGeneric from './Pages/ServiceCenter/Users/UserGeneric'
 import Home  from "./Pages/Home"
 import VolunteerHome from "./Pages/Volunteer/volunteerHome"
 
+import Request from './Pages/Request/Request';
+import ViewRequest from './Pages/Request/ViewRequest';
+import ViewFeedback from './Pages/PerformanceEvaluation/ViewPerformanceEvaluation';
+import QuarterlyReport from './Pages/QuarterlyReport/QuarterlyReport';
+import Feedback from './Pages/PerformanceEvaluation/PerformanceEvaluation';
+
 import Sample from './Pages/Sample';
 import { ChakraProvider } from '@chakra-ui/react'
 
@@ -104,6 +110,11 @@ export default function App() {
                 <DrawerItem label="Service Center" to={"/Service-Center"} logo={userImg}></DrawerItem>
                 <DrawerItem label="Projects" to={"/Project"} logo={userImg}></DrawerItem>
                 <DrawerItem label="Users" to={"/UserGeneric"} logo={userImg}></DrawerItem>
+                <DrawerItem label="Request" to={"/Request"} logo={userImg} currentActive={active} setActive={setActive}></DrawerItem>
+                <DrawerItem label="ViewRequest" to={"/ViewRequest"} logo={userImg} currentActive={active} setActive={setActive}></DrawerItem>
+                <DrawerItem label="Feedback" to={"/Feedback"} logo={userImg} currentActive={active} setActive={setActive}></DrawerItem>
+                <DrawerItem label="ViewFeedback" to={"/ViewFeedback"} logo={userImg} currentActive={active} setActive={setActive}></DrawerItem>
+                <DrawerItem label="QuarterlyReport" to={"/QuarterlyReport"} logo={userImg} currentActive={active} setActive={setActive}></DrawerItem>
                 <DrawerItem label="Logout" to={"/Logout"} logo={logoutImg}></DrawerItem>
               </DrawerSection>
             </SlideDrawer>
@@ -163,7 +174,12 @@ export default function App() {
                 <Route path="/Expenses" element={<Expense user={token} permissions={parsedPerms} />} />
                 <Route path="/Permissions" element={<Permissions user={token} permissions = {parsedPerms}/>}/>
                 <Route path="/Sample" element={<Sample user={token} permissions={parsedPerms} />} />
-              <Route path="/Logout" element={<Logout logout={logout} clearPerms={clearPerms}></Logout>}/>
+                <Route path="/Logout" element={<Logout logout={logout} clearPerms={clearPerms}></Logout>} />
+                <Route path="/Request" element={<Request user={token} permissions={JSON.parse(perms)} />} />
+                <Route path="/ViewRequest" element={<ViewRequest user={token} permissions={JSON.parse(perms)} />} />
+                <Route path="/QuarterlyReport" element={<QuarterlyReport user={token} permissions={JSON.parse(perms)} />} />
+                <Route path="/ViewFeedback" element={<ViewFeedback user={token} permissions={JSON.parse(perms)} />} />
+                <Route path="/Feedback" element={<Feedback user={token} permissions={JSON.parse(perms)} />} />
 
             </Routes>
           </header>

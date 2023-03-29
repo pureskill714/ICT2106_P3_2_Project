@@ -5,9 +5,9 @@ namespace YouthActionDotNet.Control
     public class UserGeneric : IUserRequest
     {
 
-        public int donorCount;
-        public int volunteerCount;
-        public int employeeCount;
+        private int donorCount;
+        private int volunteerCount;
+        private int employeeCount;
         protected List<INotificationListener> listeners;
         private readonly UserCountNotifier notifier;
 

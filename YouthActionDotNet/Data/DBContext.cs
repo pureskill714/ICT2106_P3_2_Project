@@ -16,10 +16,10 @@ namespace YouthActionDotNet.Data{
             .HasOne(e => e.User)
             .WithMany()
             .HasForeignKey(e => e.UserId);
-        //modelBuilder.Entity<Employee>().ToTable("Employee")
-        //    .HasOne(e => e.ServiceCenter)
-        //    .WithMany()
-        //    .HasForeignKey(e => e.ServiceCenterName);
+        modelBuilder.Entity<Employee>().ToTable("Employee")
+            .HasOne(e => e.ServiceCenter)
+            .WithMany()
+            .HasForeignKey(e => e.ServiceCenterName);
         modelBuilder.Entity<Volunteer>().ToTable("Volunteer")
             .HasOne(e => e.User)
             .WithMany().IsRequired(false)

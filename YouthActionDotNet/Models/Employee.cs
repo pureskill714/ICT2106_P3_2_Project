@@ -19,11 +19,11 @@ namespace YouthActionDotNet.Models
 
         public string EmployeeRole { get; set; }
 
-        //public string ServiceCenterName { get; set; }
+        public string ServiceCenterName { get; set; }
         
         [JsonIgnore]
         public virtual User User { get; set; }
 
-        //public virtual ServiceCenter ServiceCenter { get; set; }    
+        public virtual ServiceCenter ServiceCenter { get; set; }    
     }
 }

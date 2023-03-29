@@ -5,6 +5,30 @@ import { ReactNotifications, Store } from "react-notifications-component";
 import DatapageLayout from "../PageLayout";
 import MyComponent from "../NotificationComponent";
 
+function deepEqual(obj1, obj2) {
+    if (obj1 === obj2) {
+        return true;
+    }
+    if (typeof obj1 !== 'object' || typeof obj2 !== 'object' || obj1 === null || obj2 === null) {
+        return false;
+    }
+
+    const keys1 = Object.keys(obj1);
+    const keys2 = Object.keys(obj2);
+
+    if (keys1.length !== keys2.length) {
+        return false;
+    }
+
+    for (const key of keys1) {
+        if (!keys2.includes(key) || !deepEqual(obj1[key], obj2[key])) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 export default class ServiceCenters extends React.Component {
     state = {
         content: null,
@@ -42,15 +66,16 @@ export default class ServiceCenters extends React.Component {
             });
         });
 
-
-        await this.getEmployeeContent().then((content) => {
-            console.log(content.data);
-            const employeeNames = content.data.map((employee) => employee.username);
+        await this.getSettings().then((settings) => {
+            console.log(settings)
             this.setState({
-                employeeNameList: employeeNames
+                settings: settings,
+                fieldSettings: settings.data.FieldSettings,
+                columnSettings: settings.data.ColumnSettings
             });
-            console.log(employeeNames)
         });
+
+        await this.getEmployeeContent();
 
         await this.getDonorContent().then((content) => {
             console.log(content.data);
@@ -70,15 +95,6 @@ export default class ServiceCenters extends React.Component {
             console.log(volunteerNames)
         });
 
-        await this.getSettings().then((settings) => {
-            console.log(settings)
-            this.setState({
-                settings: settings,
-                fieldSettings: settings.data.FieldSettings,
-                columnSettings: settings.data.ColumnSettings
-            });
-        });
-
         //await this.filterEmployee();
 
         this.setState({
@@ -88,9 +104,14 @@ export default class ServiceCenters extends React.Component {
     }
 
     async componentDidUpdate(prevProps, prevState) {
-        if (this.state.fieldSettings !== prevState.fieldSettings ||
-            this.state.columnSettings !== prevState.columnSettings ||
-            this.state.dataContent !== prevState.dataContent) {
+        if (
+            !deepEqual(this.state.fieldSettings, prevState.fieldSettings) ||
+            !deepEqual(this.state.columnSettings, prevState.columnSettings) ||
+            !deepEqual(this.state.dataContent, prevState.dataContent) ||
+            !deepEqual(this.state.donorNameList, prevState.donorNameList) ||
+            !deepEqual(this.state.employeeNameList, prevState.employeeNameList) ||
+            !deepEqual(this.state.volunteerNameList, prevState.volunteerNameList)
+        ) {
             await this.filterEmployee();
         }
     }
@@ -108,15 +129,31 @@ export default class ServiceCenters extends React.Component {
         initialColumnSettings["Donor"] = { displayHeader: 'Donor' }
         initialColumnSettings["Volunteer"] = { displayHeader: 'Volunteer' }
 
+        const employeeNameMap = this.state.employeeNameList.reduce((map, employee) => {
+            if (!map[employee.serviceCenterName]) {
+                map[employee.serviceCenterName] = [];
+            }
+            map[employee.serviceCenterName].push(employee.username);
+            return map;
+        }, {});
+
         const initialSCData = this.state.dataContent;
+        const donorString = this.state.donorNameList.join(", ");
+        const volunteerString = this.state.volunteerNameList.join(", ");
 
         if (initialSCData) {
-            const updatedSCData = initialSCData.map(obj => ({
-                ...obj,
-                Employee: this.state.employeeNameList,
-                Donor: this.state.donorNameList,
-                Volunteer: this.state.volunteerNameList
-            }))
+            const updatedSCData = initialSCData.map(obj => {
+                const employeeNamesForServiceCenter = employeeNameMap[obj.ServiceCenterName]?.join(", ") || "";
+                // Do the same for donorNamesForServiceCenter and volunteerNamesForServiceCenter
+
+                return {
+                    ...obj,
+                    Employee: [employeeNamesForServiceCenter],
+                    Donor: [donorString],
+                    Volunteer: [volunteerString]
+                };
+            });
+
             console.log(initialColumnSettings, initialFieldSettings, initialSCData)
             this.setState({
                 fieldSettings: initialFieldSettings,
@@ -142,14 +179,6 @@ export default class ServiceCenters extends React.Component {
         });
         return formattedNames.join(", ");
     };
-
-    shouldComponentUpdate(nextProps, nextState) {
-        return (
-            this.state.columnSettings !== nextState.columnSettings ||
-            this.state.fieldSettings !== nextState.fieldSettings ||
-            this.state.dataContent !== nextState.dataContent
-        );
-    }
 
     test = (abc, def) => { };
 
@@ -185,9 +214,15 @@ export default class ServiceCenters extends React.Component {
                 "Content-Type": "application/json",
             },
         }).then((res) => {
-            console.log(res);
-            //Res = {success: true, message: "Success", data: Array(3)}
             return res.json();
+        }).then((content) => {
+            const employeeNames = content.data.map((employee) => ({
+                username: employee.username,
+                serviceCenterName: employee.ServiceCenterName
+            }));
+            this.setState({
+                employeeNameList: employeeNames
+            });
         });
     };
 
